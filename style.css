@@ -1,0 +1,513 @@
+/* === BASE === */
+* { margin:0; padding:0; box-sizing:border-box; }
+[hidden] { display:none !important; }
+
+body {
+    background: radial-gradient(ellipse at 50% 30%, #0d1b2a 0%, #040810 100%);
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+}
+
+/* Звёзды */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(1.5px 1.5px at 15% 25%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 35% 65%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1.5px 1.5px at 55% 15%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1.5px 1.5px at 25% 85%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 45% 35%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 65% 55%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1.5px 1.5px at 95% 10%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.3), transparent);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* === LAYOUT === */
+#game {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    padding: 5px;
+}
+
+#opp-zone, #pl-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+}
+
+#mid {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* === HERO ROW === */
+.hero-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 5px;
+}
+
+/* === HERO === */
+.hero {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    border: 3px solid;
+    position: relative;
+    transition: box-shadow 0.3s;
+    flex-shrink: 0;
+}
+
+.hero.friendly {
+    background: radial-gradient(circle, #1a3a1a, #0a1a0a);
+    border-color: #4a4;
+}
+
+.hero.enemy {
+    background: radial-gradient(circle, #3a1a1a, #1a0a0a);
+    border-color: #a44;
+    cursor: pointer;
+}
+
+.hero.targetable {
+    box-shadow: 0 0 18px rgba(255,80,80,0.7);
+    animation: pulse 1s infinite;
+}
+
+.hero .hero-name {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.hero .hero-hp {
+    color: #f66;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.hero .hero-mana {
+    color: #6af;
+    font-size: 11px;
+}
+
+.hero.anim-hit {
+    animation: hitFx 0.3s;
+}
+
+/* === DECK === */
+.deck {
+    width: 45px;
+    height: 62px;
+    background: linear-gradient(135deg, #2a1a0a, #1a0a00);
+    border: 2px solid #8a6a3a;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ca8;
+    flex-shrink: 0;
+}
+
+/* === FIELD === */
+.field {
+    min-height: 110px;
+    background: linear-gradient(180deg,
+        rgba(20,80,20,0.25) 0%,
+        rgba(30,100,30,0.35) 50%,
+        rgba(20,80,20,0.25) 100%);
+    border: 1px solid rgba(100,200,100,0.25);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 5px;
+    position: relative;
+}
+
+.field::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+}
+
+/* === HAND === */
+.hand {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 2px;
+    min-height: 100px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* === CARD === */
+.card {
+    width: 88px;
+    height: 120px;
+    border-radius: 8px;
+    border: 2px solid #555;
+    background: linear-gradient(180deg, #1a1a2e, #0f0f1f);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3px 2px;
+    font-size: 10px;
+    position: relative;
+    cursor: default;
+    transition: transform 0.15s, box-shadow 0.15s;
+    flex-shrink: 0;
+}
+
+.card.in-hand {
+    width: 76px;
+    height: 105px;
+}
+
+/* Состояния карт */
+.card.playable {
+    border-color: #4a4;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(100,255,100,0.3);
+}
+.card.playable:hover {
+    transform: translateY(-12px) scale(1.05);
+    box-shadow: 0 0 15px rgba(100,255,100,0.5);
+}
+
+.card.can-attack {
+    border-color: #cc4;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(255,255,100,0.3);
+}
+.card.can-attack:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 12px rgba(255,255,100,0.5);
+}
+
+.card.selected {
+    border-color: #ff0;
+    box-shadow: 0 0 18px rgba(255,255,0,0.6);
+    transform: translateY(-6px);
+}
+
+.card.targetable {
+    border-color: #f44;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(255,50,50,0.5);
+}
+.card.targetable:hover {
+    box-shadow: 0 0 18px rgba(255,50,50,0.8);
+}
+
+.card.taunt {
+    border-width: 3px;
+    border-style: double;
+    border-color: #aaf;
+}
+.card.taunt.can-attack { border-color: #cc4; border-style: double; }
+.card.taunt.selected { border-color: #ff0; border-style: double; }
+.card.taunt.targetable { border-color: #f44; border-style: double; }
+
+.card.frozen::before {
+    content: '❄️';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: rgba(100,150,255,0.15);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.card.sleeping {
+    opacity: 0.65;
+}
+.card.sleeping::after {
+    content: '💤';
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    font-size: 11px;
+    z-index: 2;
+}
+
+/* Элементы карты */
+.card .cost {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #33a, #228);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 2px solid #55c;
+    z-index: 3;
+    color: #fff;
+}
+
+.card .name {
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 14px;
+    color: #ddd;
+    line-height: 1.1;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.card .mid-stats {
+    font-size: 8px;
+    color: #aaa;
+    margin-top: 2px;
+    text-align: center;
+}
+
+.card .stats {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+    padding: 0 4px 2px;
+}
+
+.card .atk {
+    color: #f84;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.card .hp {
+    color: #4f4;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.card .hp.damaged {
+    color: #fa4;
+}
+
+/* Карты в руке противника (рубашки) */
+.card.opp-card {
+    background: linear-gradient(135deg, #2a0a0a, #1a0505);
+    border-color: #633;
+}
+.card.opp-card .cost,
+.card.opp-card .name,
+.card.opp-card .mid-stats,
+.card.opp-card .stats {
+    visibility: hidden;
+}
+.card.opp-card::before {
+    content: '🂠';
+    font-size: 28px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: visible;
+    background: none;
+}
+
+/* === BUTTONS === */
+#btn-end {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 14px;
+    background: linear-gradient(180deg, #3a3a1a, #2a2a0a);
+    border: 2px solid #aa4;
+    border-radius: 8px;
+    color: #ff8;
+    font-size: 13px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+#btn-end:hover:not(:disabled) {
+    background: linear-gradient(180deg, #4a4a2a, #3a3a1a);
+}
+#btn-end:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+#btn-new {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    background: linear-gradient(180deg, #1a3a1a, #0a2a0a);
+    border: 2px solid #4a4;
+    border-radius: 10px;
+    color: #8f8;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 100;
+}
+#btn-new:hover {
+    background: linear-gradient(180deg, #2a4a2a, #1a3a1a);
+}
+
+/* === BANNER === */
+#banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff8;
+    text-shadow: 0 0 20px rgba(255,200,0,0.5);
+    padding: 12px 36px;
+    background: rgba(0,0,0,0.85);
+    border: 2px solid #aa4;
+    border-radius: 12px;
+    z-index: 100;
+    animation: bannerIn 0.3s ease-out;
+    white-space: nowrap;
+}
+
+/* === LOG === */
+#log {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 140px;
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: 9px;
+    color: #777;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+    padding: 4px;
+    z-index: 5;
+}
+#log div {
+    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding-bottom: 2px;
+}
+
+/* === FLOAT DAMAGE === */
+.float-dmg {
+    position: fixed;
+    font-size: 22px;
+    font-weight: bold;
+    color: #f44;
+    text-shadow: 0 0 6px #f00, 0 0 2px #000;
+    pointer-events: none;
+    animation: floatUp 0.9s ease-out forwards;
+    z-index: 50;
+}
+.float-heal {
+    color: #4f4;
+    text-shadow: 0 0 6px #0f0, 0 0 2px #000;
+}
+
+/* === CONFETTI === */
+#confetti-box {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    overflow: hidden;
+}
+.confetti {
+    position: absolute;
+    top: -20px;
+    animation: confettiFall linear forwards;
+}
+
+/* === ANIMATIONS === */
+@keyframes cardIn {
+    from { transform: scale(0) rotate(8deg); opacity: 0; }
+    to { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes lunge-up {
+    0% { transform: translateY(0); }
+    40% { transform: translateY(-35px); }
+    100% { transform: translateY(0); }
+}
+@keyframes lunge-down {
+    0% { transform: translateY(0); }
+    40% { transform: translateY(35px); }
+    100% { transform: translateY(0); }
+}
+@keyframes hitFx {
+    0% { filter: brightness(1); }
+    30% { filter: brightness(2.5) saturate(2); }
+    100% { filter: brightness(1); }
+}
+@keyframes dying {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(0) rotate(15deg); opacity: 0; }
+}
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-45px) scale(1.3); opacity: 0; }
+}
+@keyframes bannerIn {
+    from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+@keyframes confettiFall {
+    from { transform: translateY(0) rotate(0deg); opacity: 1; }
+    to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255,80,80,0.4); }
+    50% { box-shadow: 0 0 22px rgba(255,80,80,0.8); }
+}
+
+/* Animation classes */
+.card.anim-in { animation: cardIn 0.3s ease-out; }
+.card.anim-lunge-up { animation: lunge-up 0.4s ease-in-out; }
+.card.anim-lunge-down { animation: lunge-down 0.4s ease-in-out; }
+.card.anim-hit { animation: hitFx 0.3s; }
+.card.anim-dying { animation: dying 0.5s ease-in forwards; }

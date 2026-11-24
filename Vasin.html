@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матч Легенд ☕⚽</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game">
+        <div id="opp-zone">
+            <div class="hero-row">
+                <div id="opp-hero" class="hero enemy" onclick="onOppHero()"></div>
+                <div id="opp-deck" class="deck"></div>
+            </div>
+            <div id="opp-hand" class="hand"></div>
+            <div id="opp-field" class="field"></div>
+        </div>
+        <div id="mid">
+            <div id="banner" hidden></div>
+            <div id="log"></div>
+        </div>
+        <div id="pl-zone">
+            <div id="pl-field" class="field"></div>
+            <div id="pl-hand" class="hand"></div>
+            <div class="hero-row">
+                <div id="pl-hero" class="hero friendly"></div>
+                <div id="pl-deck" class="deck"></div>
+            </div>
+        </div>
+        <button id="btn-end" onclick="onEndTurn()">⏭ Завершить ход</button>
+        <button id="btn-new" hidden onclick="init()">🔄 Новая игра</button>
+    </div>
+    <div id="confetti-box"></div>
+    <script src="game.js"></script>
+</body>
+</html>
